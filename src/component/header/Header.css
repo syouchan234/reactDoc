@@ -1,0 +1,16 @@
+.header {
+    /*※IEではバグるらしい */
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    /* ヘッダーの幅を100%に設定 */
+    width: 100%;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
