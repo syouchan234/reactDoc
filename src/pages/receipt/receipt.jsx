@@ -39,7 +39,7 @@ function Receipt() {
 
     const handleDownload = async () => {
         try {
-            const filePath = process.env.PUBLIC_URL + '/template/receipt_template.xlsx';
+            const filePath = process.env.PUBLIC_URL + '/template/receipt_typeA_template.xlsx';
             const response = await fetch(filePath);
             if (!response.ok) {
                 throw new Error('テンプレートファイルが見つかりません');

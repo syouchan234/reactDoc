@@ -38,9 +38,22 @@ function Option() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+    
+    // 各フィールドに応じてマークを追加
+    if (name === 'postcode' && value && !value.startsWith('〒')) {
+        formattedValue = `〒${value}`;
+    } else if (name === 'tel' && value && !value.startsWith('☎')) {
+        formattedValue = `☎${value}`;
+    } else if (name === 'fax' && value && !value.startsWith('📠')) {
+        formattedValue = `📠${value}`;
+    } else if (name === 'email' && value && !value.startsWith('✉')) {
+        formattedValue = `✉${value}`;
+    }
+
     setCompanyInfo(prev => ({
-      ...prev,
-      [name]: value
+        ...prev,
+        [name]: formattedValue
     }));
   };
 
@@ -65,6 +78,29 @@ function Option() {
         fax: '',
         email: ''
       });
+      setSuccess(true);
+    } catch (err) {
+      setError('削除に失敗しました');
+    }
+  };
+
+  const handleDeleteAll = () => {
+    try {
+      // 自社情報を削除
+      localStorage.removeItem('companyInfo');
+      setCompanyInfo({
+        name: '',
+        postcode: '',
+        address: '',
+        building: '',
+        tel: '',
+        fax: '',
+        email: ''
+      });
+      
+      // 顧客情報も削除
+      localStorage.removeItem('customerInfo');
+      
       setSuccess(true);
     } catch (err) {
       setError('削除に失敗しました');
@@ -114,14 +150,14 @@ function Option() {
           <TextField
             label="FAX"
             name="fax"
-            value={"📠"+companyInfo.fax}
+            value={companyInfo.fax}
             onChange={handleChange}
             fullWidth
           />
           <TextField
             label="メールアドレス"
             name="email"
-            value={"✉"+companyInfo.email}
+            value={companyInfo.email}
             onChange={handleChange}
             fullWidth
           />
@@ -129,9 +165,16 @@ function Option() {
             <Button 
               variant="contained" 
               color="error" 
+              onClick={handleDeleteAll}
+            >
+              全データ削除
+            </Button>
+            <Button 
+              variant="contained" 
+              color="error" 
               onClick={handleDelete}
             >
-              削除
+              自社情報削除
             </Button>
             <Button 
               variant="contained" 

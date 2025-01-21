@@ -42,9 +42,22 @@ function CustomerForm({ open, onClose }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let formattedValue = value;
+        
+        // 各フィールドに応じてマークを追加
+        if (name === 'postcode' && value && !value.startsWith('〒')) {
+            formattedValue = `〒${value}`;
+        } else if (name === 'tel' && value && !value.startsWith('☎')) {
+            formattedValue = `☎${value}`;
+        } else if (name === 'fax' && value && !value.startsWith('📠')) {
+            formattedValue = `📠${value}`;
+        } else if (name === 'email' && value && !value.startsWith('✉')) {
+            formattedValue = `✉${value}`;
+        }
+
         setCustomerInfo(prev => ({
             ...prev,
-            [name]: value
+            [name]: formattedValue
         }));
     };
 
@@ -66,9 +79,10 @@ function CustomerForm({ open, onClose }) {
                 postcode: '',
                 address: '',
                 department: '',
-                manager: '',
+                manager: ''
             });
             setSuccess(true);
+            onClose();
         } catch (err) {
             setError('削除に失敗しました');
         }
@@ -119,7 +133,7 @@ function CustomerForm({ open, onClose }) {
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleDelete}>
-                        削除
+                        顧客情報削除
                     </Button>
                     <Button onClick={onClose}>
                         キャンセル

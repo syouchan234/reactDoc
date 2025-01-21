@@ -99,18 +99,21 @@ function Invoice() {
     };
 
     return (
-        <DocumentForm
-            title="請求書"
-            items={items}
-            onAddItem={handleAddItem}
-            onRemoveItem={handleRemoveItem}
-            onUpdateItem={handleUpdateItem}
-            onSubmit={handleDownload}
-            error={error}
-            success={success}
-            onErrorClose={() => setError(null)}
-            onSuccessClose={() => setSuccess(false)}
-        />
+        <div>
+            <DocumentForm
+                title="請求書"
+                items={items}
+                onAddItem={handleAddItem}
+                onRemoveItem={handleRemoveItem}
+                onUpdateItem={handleUpdateItem}
+                onSubmit={handleDownload}
+                error={error}
+                success={success}
+                onErrorClose={() => setError(null)}
+                onSuccessClose={() => setSuccess(false)}
+            />
+        </div>
+
     );
 }
 
