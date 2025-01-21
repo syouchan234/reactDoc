@@ -1,26 +1,11 @@
 import React, { useState } from 'react';
-import { 
-    Button, 
-    TextField, 
-    Card, 
-    Stack, 
-    Snackbar, 
-    Alert,
-    IconButton,
-    Box,
-    Grid,
-    MenuItem,
-    Typography
-} from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DocumentForm from '../../component/documentForm/DocumentForm';
 import ExcelJS from 'exceljs';
-import './invoice.css';
 
 function Invoice() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    const [orderItems, setOrderItems] = useState([
+    const [items, setItems] = useState([
         {
             productName: '',
             quantity: '',
@@ -29,15 +14,12 @@ function Invoice() {
         }
     ]);
 
-    const units = ['個', 'kg', '台', '人', '時間'];
-
-    // 発注内容の追加
-    const addOrderItem = () => {
-        if (orderItems.length >= 24) {
-            setError('発注内容は24件までしか登録できません');
+    const handleAddItem = () => {
+        if (items.length >= 24) {
+            setError('明細は24件までしか登録できません');
             return;
         }
-        setOrderItems(prev => [...prev, {
+        setItems(prev => [...prev, {
             productName: '',
             quantity: '',
             unit: '個',
@@ -45,19 +27,17 @@ function Invoice() {
         }]);
     };
 
-    // 発注内容の削除
-    const removeOrderItem = (index) => {
-        setOrderItems(prev => prev.filter((_, i) => i !== index));
+    const handleRemoveItem = (index) => {
+        setItems(prev => prev.filter((_, i) => i !== index));
     };
 
-    // 発注内容の更新
-    const updateOrderItem = (index, field, value) => {
-        setOrderItems(prev => prev.map((item, i) => 
+    const handleUpdateItem = (index, field, value) => {
+        setItems(prev => prev.map((item, i) => 
             i === index ? { ...item, [field]: value } : item
         ));
     };
 
-    const downloadExcel = async () => {
+    const handleDownload = async () => {
         try {
             const filePath = process.env.PUBLIC_URL + '/template/invoice_template.xlsx';
             const response = await fetch(filePath);
@@ -95,7 +75,7 @@ function Invoice() {
             worksheet.getCell('E8').value = customerInfo.manager;
 
             // 発注内容を設定
-            orderItems.forEach((item, index) => {
+            items.forEach((item, index) => {
                 const rowNumber = 17 + index;
                 worksheet.getCell(`C${rowNumber}`).value = item.productName;
                 worksheet.getCell(`I${rowNumber}`).value = Number(item.quantity);
@@ -119,107 +99,18 @@ function Invoice() {
     };
 
     return (
-        <div className="invoice">
-            <h1>請求書</h1>
-            <Card className="invoice-card">
-                <Stack spacing={3} padding={3}>
-                    <Typography variant="h6">発注内容</Typography>
-                    {orderItems.map((item, index) => (
-                        <Box key={index} sx={{ position: 'relative', p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} md={6}>
-                                    <TextField
-                                        label="商品名"
-                                        value={item.productName}
-                                        onChange={(e) => updateOrderItem(index, 'productName', e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <TextField
-                                        label="数量"
-                                        type="number"
-                                        value={item.quantity}
-                                        onChange={(e) => updateOrderItem(index, 'quantity', e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <TextField
-                                        select
-                                        label="単位"
-                                        value={item.unit}
-                                        onChange={(e) => updateOrderItem(index, 'unit', e.target.value)}
-                                        fullWidth
-                                    >
-                                        {units.map((unit) => (
-                                            <MenuItem key={unit} value={unit}>
-                                                {unit}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <TextField
-                                        label="単価"
-                                        type="number"
-                                        value={item.price}
-                                        onChange={(e) => updateOrderItem(index, 'price', e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                            </Grid>
-                            {orderItems.length > 1 && (
-                                <IconButton
-                                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                                    onClick={() => removeOrderItem(index)}
-                                    color="error"
-                                >
-                                    <DeleteOutlineIcon />
-                                </IconButton>
-                            )}
-                        </Box>
-                    ))}
-
-                    <Button
-                        startIcon={<AddCircleOutlineIcon />}
-                        onClick={addOrderItem}
-                        variant="outlined"
-                        disabled={orderItems.length >= 24}
-                    >
-                        発注内容を追加
-                    </Button>
-
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
-                        onClick={downloadExcel}
-                    >
-                        請求書をダウンロード
-                    </Button>
-                </Stack>
-            </Card>
-
-            <Snackbar 
-                open={error !== null} 
-                autoHideDuration={6000} 
-                onClose={() => setError(null)}
-            >
-                <Alert severity="error" onClose={() => setError(null)}>
-                    {error}
-                </Alert>
-            </Snackbar>
-
-            <Snackbar 
-                open={success} 
-                autoHideDuration={6000} 
-                onClose={() => setSuccess(false)}
-            >
-                <Alert severity="success" onClose={() => setSuccess(false)}>
-                    ファイルが正常にダウンロードされました
-                </Alert>
-            </Snackbar>
-        </div>
+        <DocumentForm
+            title="請求書"
+            items={items}
+            onAddItem={handleAddItem}
+            onRemoveItem={handleRemoveItem}
+            onUpdateItem={handleUpdateItem}
+            onSubmit={handleDownload}
+            error={error}
+            success={success}
+            onErrorClose={() => setError(null)}
+            onSuccessClose={() => setSuccess(false)}
+        />
     );
 }
 
