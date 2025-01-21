@@ -4,6 +4,11 @@ import Contract from './pages/contract/contract';
 import Invoice from './pages/invoice/invoice';
 import Option from './pages/option/option';
 import Home from './pages/home/home';
+import Delivery from './pages/delivery/delivery';
+import Estimate from './pages/estimate/estimate';
+import Order from './pages/order/order';
+import Receipt from './pages/receipt/receipt';
+
 import CustomerForm from './component/customerForm/CustomerForm';
 import { Fab } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -23,6 +28,10 @@ function App() {
           <Route path="/contract" element={<Contract />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/option" element={<Option />} />
+          <Route path="/delivery" element={<Delivery />}/>
+          <Route path="/order" element={<Order />}/>
+          <Route path="/estimate" element={<Estimate />}/>
+          <Route path="/Receipt" element={<Receipt />}/>
         </Routes>
         
         <Fab 

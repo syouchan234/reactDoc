@@ -179,6 +179,21 @@ const Contract = () => {
         }));
     };
 
+    // 契約種別の文字列を取得する関数を修正
+    const getContractTypeText = (type) => {
+        let contractText = '';
+        switch(type) {
+            case 'sales': contractText = '売買契約'; break;
+            case 'service': contractText = '業務委託契約'; break;
+            case 'nda': contractText = '機密保持契約'; break;
+            case 'lease': contractText = '賃貸借契約'; break;
+            case 'employment': contractText = '雇用契約'; break;
+            default: contractText = contractInfo.contractName || '契約';
+        }
+        // 末尾の"書"を除去
+        return contractText.endsWith('書') ? contractText.slice(0, -1) : contractText;
+    };
+
     const generateContract = async () => {
         try {
             const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
@@ -187,10 +202,13 @@ const Contract = () => {
             // 契約書名が入力されている場合はそれを使用、なければ契約種別から自動生成
             const contractTitle = contractInfo.contractName || 
                 (contractInfo.contractType === 'sales' ? "売買契約書" : 
-                 contractInfo.contractType === 'service' ? "業務委託契約書" : 
-                 contractInfo.contractType === 'nda' ? "機密保持契約書" : 
-                 contractInfo.contractType === 'lease' ? "賃貸借契約書" : 
-                 contractInfo.contractType === 'employment' ? "雇用契約書" : "契約書");
+                contractInfo.contractType === 'service' ? "業務委託契約書" : 
+                contractInfo.contractType === 'nda' ? "機密保持契約書" : 
+                contractInfo.contractType === 'lease' ? "賃貸借契約書" : 
+                contractInfo.contractType === 'employment' ? "雇用契約書" : "契約書");
+
+            // 契約種別の文字列を取得
+            const contractTypeText = getContractTypeText(contractInfo.contractType);
 
             // 条項を段落に変換
             const articleParagraphs = articles.flatMap((article, index) => {
@@ -274,40 +292,43 @@ const Contract = () => {
 
             const signatureParagraphs = [
                 new Paragraph({ text: "", spacing: { after: 400 } }), // 署名欄の前に空行
-                new Paragraph({
+                new Paragraph({ 
                     text: formatDate(new Date()),
                     alignment: AlignmentType.RIGHT,
                     spacing: { after: 400 },
                 }),
+                // 甲の署名欄（常に表示）
+                new Paragraph({ text: "甲", spacing: { after: 200 } })
             ];
 
-            // 甲（顧客）の署名欄
+            // 甲の情報（チェックボックスに応じて表示）
             if (signatures.showCustomerSignature) {
                 signatureParagraphs.push(
-                    new Paragraph({ text: "甲", spacing: { after: 200 } }),
-                    new Paragraph({ 
-                        text: customerInfo.name, 
-                        spacing: { after: 200 } 
-                    }),
-                    new Paragraph({ 
-                        text: customerInfo.address || '', 
-                        spacing: { after: 400 } 
-                    })
+                    new Paragraph({ text: customerInfo.name, spacing: { after: 200 } }),
+                    new Paragraph({ text: customerInfo.address || '', spacing: { after: 400 } })
+                );
+            } else {
+                signatureParagraphs.push(
+                    new Paragraph({ text: "", spacing: { after: 200 } }),
+                    new Paragraph({ text: "", spacing: { after: 400 } })
                 );
             }
 
-            // 乙（自社）の署名欄
+            // 乙の署名欄（常に表示）
+            signatureParagraphs.push(
+                new Paragraph({ text: "乙", spacing: { after: 200 } })
+            );
+
+            // 乙の情報（チェックボックスに応じて表示）
             if (signatures.showCompanySignature) {
                 signatureParagraphs.push(
-                    new Paragraph({ text: "乙", spacing: { after: 200 } }),
-                    new Paragraph({ 
-                        text: companyInfo.name, 
-                        spacing: { after: 200 } 
-                    }),
-                    new Paragraph({ 
-                        text: companyInfo.address || '', 
-                        spacing: { after: 200 } 
-                    })
+                    new Paragraph({ text: companyInfo.name, spacing: { after: 200 } }),
+                    new Paragraph({ text: companyInfo.address || '', spacing: { after: 200 } })
+                );
+            } else {
+                signatureParagraphs.push(
+                    new Paragraph({ text: "", spacing: { after: 200 } }),
+                    new Paragraph({ text: "", spacing: { after: 200 } })
                 );
             }
 
@@ -322,7 +343,7 @@ const Contract = () => {
                             spacing: { after: 400 },
                         }),
                         new Paragraph({
-                            text: `${customerInfo.name}（以下「甲」という）と${companyInfo.name}（以下「乙」という）とは、以下のとおり${contractInfo.contractType === 'sales' ? '売買契約' : '業務委託契約'}（以下「本契約」という）を締結する。`,
+                            text: `${customerInfo.name}（以下「甲」という）と${companyInfo.name}（以下「乙」という）とは、以下のとおり${contractTypeText}（以下「本契約」という）を締結する。`,
                             spacing: { after: 400 },
                         }),
                         ...articleParagraphs,

@@ -12,9 +12,10 @@ const Header = () => {
                         <Button color="inherit" component={Link} to="/">ホーム</Button>
                         <Button color="inherit" component={Link} to="/contract">契約書</Button>
                         <Button color="inherit" component={Link} to="/invoice">請求書</Button>
-                        <Button color="inherit">見積書</Button>
-                        <Button color="inherit">発注書</Button>
-                        <Button color="inherit">納品書</Button>
+                        <Button color="inherit" component={Link} to="/estimate">見積書</Button>
+                        <Button color="inherit" component={Link} to="/order">発注書</Button>
+                        <Button color="inherit" component={Link} to="/delivery">納品書</Button>
+                        <Button color="inherit" component={Link} to="/receipt">領収書</Button>
                         <Button color="inherit" component={Link} to="/option">設定</Button>
                     </Toolbar>
                 </AppBar>
