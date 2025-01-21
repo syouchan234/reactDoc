@@ -113,7 +113,7 @@ function Option() {
       <Card className="option-card">
         <Stack spacing={2} padding={3}>
           <TextField
-            label="会社名"
+            label="会社名or個人名"
             name="name"
             value={companyInfo.name}
             onChange={handleChange}

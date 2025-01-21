@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 1100; /* Drawerより低いz-indexを設定 */
     /* ヘッダーの幅を100%に設定 */
     width: 100%;
 }
@@ -13,4 +13,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* モバイル用のスタイル */
+@media (max-width: 900px) {
+    .MuiDrawer-paper {
+        width: 240px;
+    }
 }

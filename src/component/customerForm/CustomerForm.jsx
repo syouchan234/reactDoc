@@ -95,7 +95,7 @@ function CustomerForm({ open, onClose }) {
                 <DialogContent>
                     <Stack spacing={2} padding={2}>
                         <TextField
-                            label="会社名"
+                            label="会社名or個人名"
                             name="name"
                             value={customerInfo.name}
                             onChange={handleChange}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
     Button, 
     TextField, 
@@ -28,8 +28,61 @@ const DocumentForm = ({
     onErrorClose,
     onSuccessClose,
     maxItems = 24,
-    units = ['個', 'kg', '台', '人', '時間']
+    units = ['個', 'kg', '台', '人', '時間', 'その他'],
+    additionalFields,
+    onCustomUnitChange
 }) => {
+    // その他の単位を保持するstate
+    const [customUnits, setCustomUnits] = useState({});
+
+    // 金額計算
+    const calculations = useMemo(() => {
+        const subtotal = items.reduce((sum, item) => {
+            const quantity = Number(item.quantity) || 0;
+            const price = Number(item.price) || 0;
+            return sum + (quantity * price);
+        }, 0);
+        
+        const tax = Math.floor(subtotal * 0.1); // 消費税10%（切り捨て）
+        const total = subtotal + tax;
+
+        return {
+            subtotal,
+            tax,
+            total
+        };
+    }, [items]);
+
+    const handleUnitChange = (index, value) => {
+        if (value === 'その他') {
+            // その他が選択された場合、カスタム単位の初期値を設定
+            setCustomUnits(prev => ({
+                ...prev,
+                [index]: prev[index] || ''
+            }));
+        } else {
+            // その他以外が選択された場合、カスタム単位を削除
+            setCustomUnits(prev => {
+                const newUnits = { ...prev };
+                delete newUnits[index];
+                return newUnits;
+            });
+        }
+        onUpdateItem(index, 'unit', value);
+    };
+
+    const handleCustomUnitChange = (index, value) => {
+        const newCustomUnits = {
+            ...customUnits,
+            [index]: value
+        };
+        setCustomUnits(newCustomUnits);
+        // 親コンポーネントにカスタム単位の情報を渡す
+        if (onCustomUnitChange) {
+            onCustomUnitChange(newCustomUnits);
+        }
+    };
+
     return (
         <div className="document-form">
             <h1>{title}</h1>
@@ -61,7 +114,7 @@ const DocumentForm = ({
                                         select
                                         label="単位"
                                         value={item.unit}
-                                        onChange={(e) => onUpdateItem(index, 'unit', e.target.value)}
+                                        onChange={(e) => handleUnitChange(index, e.target.value)}
                                         fullWidth
                                     >
                                         {units.map((unit) => (
@@ -70,6 +123,16 @@ const DocumentForm = ({
                                             </MenuItem>
                                         ))}
                                     </TextField>
+                                    {item.unit === 'その他' && (
+                                        <TextField
+                                            label="単位を入力"
+                                            value={customUnits[index] || ''}
+                                            onChange={(e) => handleCustomUnitChange(index, e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            sx={{ mt: 1 }}
+                                        />
+                                    )}
                                 </Grid>
                                 <Grid item xs={12} md={2}>
                                     <TextField
@@ -101,6 +164,48 @@ const DocumentForm = ({
                     >
                         明細を追加
                     </Button>
+
+                    {/* 金額計算表示 */}
+                    <Box sx={{ 
+                        mt: 2, 
+                        p: 2, 
+                        border: '1px solid #ddd', 
+                        borderRadius: 1,
+                        backgroundColor: '#f5f5f5'
+                    }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={6} />
+                            <Grid item xs={12} md={6}>
+                                <Stack spacing={1}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography>小計（税抜）:</Typography>
+                                        <Typography>¥{calculations.subtotal.toLocaleString()}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography>消費税（10%）:</Typography>
+                                        <Typography>¥{calculations.tax.toLocaleString()}</Typography>
+                                    </Box>
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        justifyContent: 'space-between',
+                                        borderTop: '1px solid #ddd',
+                                        pt: 1,
+                                        fontWeight: 'bold'
+                                    }}>
+                                        <Typography>請求金額（税込）:</Typography>
+                                        <Typography>¥{calculations.total.toLocaleString()}</Typography>
+                                    </Box>
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                    </Box>
+
+                    {/* 追加フィールドの表示 */}
+                    {additionalFields && (
+                        <Box sx={{ mt: 3 }}>
+                            {additionalFields}
+                        </Box>
+                    )}
 
                     <Button 
                         variant="contained" 
