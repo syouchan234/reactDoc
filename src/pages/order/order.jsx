@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DocumentForm from '../../component/documentForm/DocumentForm';
 import ExcelJS from 'exceljs';
+import { TextField, Typography, Box } from '@mui/material';
 
 function Order() {
     const [error, setError] = useState(null);
@@ -13,6 +14,7 @@ function Order() {
             price: ''
         }
     ]);
+    const [remarks, setRemarks] = useState('');
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -83,6 +85,9 @@ function Order() {
                 worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
             });
 
+            // 備考欄を設定
+            worksheet.getCell('D46').value = remarks;
+
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = window.URL.createObjectURL(blob);
@@ -98,6 +103,29 @@ function Order() {
         }
     };
 
+    // 追加フィールドのコンポーネント
+    const additionalFields = (
+        <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" gutterBottom>
+                追加情報
+            </Typography>
+            <TextField
+                label="備考"
+                value={remarks}
+                onChange={(e) => {
+                    if (e.target.value.length <= 270) {
+                        setRemarks(e.target.value);
+                    }
+                }}
+                multiline
+                rows={4}
+                fullWidth
+                helperText={`${remarks.length}/270文字`}
+                error={remarks.length >= 270}
+            />
+        </Box>
+    );
+
     return (
         <DocumentForm
             title="発注書"
@@ -110,6 +138,7 @@ function Order() {
             success={success}
             onErrorClose={() => setError(null)}
             onSuccessClose={() => setSuccess(false)}
+            additionalFields={additionalFields}
         />
     );
 }

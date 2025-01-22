@@ -152,8 +152,8 @@ function Invoice() {
         </>
     );
 
-    return (
-        <div>
+  return (
+    <div>
             <DocumentForm
                 title="請求書"
                 items={items}
@@ -168,8 +168,8 @@ function Invoice() {
                 additionalFields={additionalFields}
                 onCustomUnitChange={handleCustomUnitChange}
             />
-        </div>
-    );
+    </div>
+  );
 }
 
 export default Invoice;

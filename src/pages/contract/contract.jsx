@@ -712,7 +712,6 @@ const Contract = () => {
             <h1>♡契約書テンプレート作成つーる♡</h1>
             <Card className="contract-card">
                 <Stack spacing={3} padding={3}>
-                    {/* フォームのレイアウトを中央揃えに修正 */}
                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Grid container spacing={2} sx={{ maxWidth: 800 }}>
                             <Grid item xs={12} md={6}>
@@ -912,7 +911,7 @@ const Contract = () => {
                         color="primary" 
                         onClick={generateContract}
                     >
-                        契約書を生成
+                        ワードでダウンロード
                     </Button>
                     </Stack>
                 </Stack>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DocumentForm from '../../component/documentForm/DocumentForm';
 import ExcelJS from 'exceljs';
+import { TextField, Typography, Box } from '@mui/material';
 
 function Estimate() {
     const [error, setError] = useState(null);
@@ -13,6 +14,8 @@ function Estimate() {
             price: ''
         }
     ]);
+    const [remarks, setRemarks] = useState('');
+    const [expiryDate, setExpiryDate] = useState('');
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -83,6 +86,12 @@ function Estimate() {
                 worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
             });
 
+            // 有効期限を設定
+            worksheet.getCell('F42').value = expiryDate;
+            
+            // 備考欄を設定
+            worksheet.getCell('D46').value = remarks;
+
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = window.URL.createObjectURL(blob);
@@ -98,6 +107,40 @@ function Estimate() {
         }
     };
 
+    // 追加フィールドのコンポーネント
+    const additionalFields = (
+        <>
+            <Box sx={{ mt: 4 }}>
+                <Typography variant="h6" gutterBottom>
+                    追加情報
+                </Typography>
+                <TextField
+                    label="有効期限"
+                    type="date"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    label="備考"
+                    value={remarks}
+                    onChange={(e) => {
+                        if (e.target.value.length <= 270) {
+                            setRemarks(e.target.value);
+                        }
+                    }}
+                    multiline
+                    rows={4}
+                    fullWidth
+                    helperText={`${remarks.length}/270文字`}
+                    error={remarks.length >= 270}
+                />
+            </Box>
+        </>
+    );
+
     return (
         <DocumentForm
             title="見積書"
@@ -110,6 +153,7 @@ function Estimate() {
             success={success}
             onErrorClose={() => setError(null)}
             onSuccessClose={() => setSuccess(false)}
+            additionalFields={additionalFields}
         />
     );
 }

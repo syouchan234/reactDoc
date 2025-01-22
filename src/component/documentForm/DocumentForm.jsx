@@ -212,7 +212,7 @@ const DocumentForm = ({
                         color="primary" 
                         onClick={onSubmit}
                     >
-                        {title}をダウンロード
+                        {title}をエクセルでダウンロード
                     </Button>
                 </Stack>
             </Card>

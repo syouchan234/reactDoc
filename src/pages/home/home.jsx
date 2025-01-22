@@ -91,7 +91,7 @@ const Home = () => {
                                         <DescriptionIcon />
                                     </ListItemIcon>
                                     <ListItemText 
-                                        primary="見積書・請求書・発注書" 
+                                        primary="見積書・請求書・発注書・領収書" 
                                         secondary="取引に必要な基本的な書類を作成できます"
                                     />
                                 </ListItem>
