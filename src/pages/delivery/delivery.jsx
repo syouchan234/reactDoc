@@ -41,7 +41,6 @@ function Delivery() {
 
     const handleDownload = async () => {
         try {
-            // const filePath = process.env.PUBLIC_URL + '/template/invoice_template.xlsx';
             const filePath = process.env.PUBLIC_URL + '/template/delivery_template.xlsx';
             const response = await fetch(filePath);
             if (!response.ok) {
