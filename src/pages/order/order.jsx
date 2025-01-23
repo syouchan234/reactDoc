@@ -41,7 +41,7 @@ function Order() {
 
     const handleDownload = async () => {
         try {
-            const filePath = process.env.PUBLIC_URL + '/template/order_template.xlsx';
+            const filePath = `${window.location.origin}${process.env.PUBLIC_URL}/template/order_template.xlsx`;
             const response = await fetch(filePath);
             if (!response.ok) {
                 throw new Error('テンプレートファイルが見つかりません');

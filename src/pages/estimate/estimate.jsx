@@ -42,65 +42,97 @@ function Estimate() {
 
     const handleDownload = async () => {
         try {
-            const filePath = process.env.PUBLIC_URL + '/template/estimate_template.xlsx';
+            const filePath = `${window.location.origin}${process.env.PUBLIC_URL}/template/estimate_template.xlsx`;
+            
+            console.log('Trying to fetch template from:', filePath); // デバッグ用
+
             const response = await fetch(filePath);
             if (!response.ok) {
-                throw new Error('テンプレートファイルが見つかりません');
+                throw new Error(
+                    '見積書テンプレートファイルの読み込みに失敗しました。\n' +
+                    `ステータス: ${response.status}\n` +
+                    `パス: ${filePath}\n` +
+                    'public/template/estimate_template.xlsx が存在するか確認してください。'
+                );
             }
+
             const arrayBuffer = await response.arrayBuffer();
             const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(arrayBuffer);
-            const worksheet = workbook.getWorksheet(1);
-
-            // 発行ナンバー入力
-            const No_cell = worksheet.getCell('M2');
-            No_cell.value = 1;
-            // 見積日入力
-            const date_cell = worksheet.getCell('M3');
-            date_cell.value = new Date().toLocaleDateString();
-
-            // 自社情報を設定
-            const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
-            worksheet.getCell('J5').value = companyInfo.name;
-            worksheet.getCell('J7').value = companyInfo.postcode;
-            worksheet.getCell('J8').value = companyInfo.address;
-            worksheet.getCell('J9').value = companyInfo.building;
-            worksheet.getCell('J10').value = companyInfo.tel;
-            worksheet.getCell('M10').value = companyInfo.fax;
-            worksheet.getCell('J11').value = companyInfo.email;
-
-            // 顧客情報を設定
-            const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
-            worksheet.getCell('B5').value = customerInfo.name;
-            worksheet.getCell('B7').value = customerInfo.postcode;
-            worksheet.getCell('D7').value = customerInfo.address;
-            worksheet.getCell('C8').value = customerInfo.department;
-            worksheet.getCell('E8').value = customerInfo.manager;
-
-            // 明細を設定
-            items.forEach((item, index) => {
-                const rowNumber = 17 + index;
-                worksheet.getCell(`C${rowNumber}`).value = item.productName;
-                worksheet.getCell(`I${rowNumber}`).value = Number(item.quantity);
-                worksheet.getCell(`J${rowNumber}`).value = item.unit;
-                worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
-            });
-
-            // 有効期限を設定
-            worksheet.getCell('F42').value = expiryDate;
             
-            // 備考欄を設定
-            worksheet.getCell('D46').value = remarks;
+            try {
+                await workbook.xlsx.load(arrayBuffer);
+            } catch (error) {
+                throw new Error(
+                    'Excelファイルの読み込みに失敗しました。\n' +
+                    'ファイルが破損している可能性があります。\n' +
+                    error.message
+                );
+            }
 
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const url = window.URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = '見積書.xlsx';
-            anchor.click();
-            window.URL.revokeObjectURL(url);
-            setSuccess(true);
+            const worksheet = workbook.getWorksheet(1);
+            if (!worksheet) {
+                throw new Error('ワークシートが見つかりません。テンプレートファイルを確認してください。');
+            }
+
+            console.log('Worksheet loaded:', worksheet.name); // デバッグ用
+
+            // 以降のコードは、worksheetが正しく取得できた場合のみ実行
+            try {
+                // 発行ナンバー入力
+                worksheet.getCell('M2').value = 1;
+                // 見積日入力
+                worksheet.getCell('M3').value = new Date().toLocaleDateString();
+
+                // 自社情報を設定
+                const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
+                worksheet.getCell('J5').value = companyInfo.name;
+                worksheet.getCell('J7').value = companyInfo.postcode;
+                worksheet.getCell('J8').value = companyInfo.address;
+                worksheet.getCell('J9').value = companyInfo.building;
+                worksheet.getCell('J10').value = companyInfo.tel;
+                worksheet.getCell('M10').value = companyInfo.fax;
+                worksheet.getCell('J11').value = companyInfo.email;
+
+                // 顧客情報を設定
+                const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
+                worksheet.getCell('B5').value = customerInfo.name;
+                worksheet.getCell('B7').value = customerInfo.postcode;
+                worksheet.getCell('D7').value = customerInfo.address;
+                worksheet.getCell('C8').value = customerInfo.department;
+                worksheet.getCell('E8').value = customerInfo.manager;
+
+                // 明細を設定
+                items.forEach((item, index) => {
+                    const rowNumber = 17 + index;
+                    worksheet.getCell(`C${rowNumber}`).value = item.productName;
+                    worksheet.getCell(`I${rowNumber}`).value = Number(item.quantity);
+                    worksheet.getCell(`J${rowNumber}`).value = item.unit;
+                    worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
+                });
+
+                // 有効期限を設定
+                worksheet.getCell('F42').value = expiryDate;
+                
+                // 備考欄を設定
+                worksheet.getCell('D46').value = remarks;
+
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.href = url;
+                anchor.download = '見積書.xlsx';
+                anchor.click();
+                window.URL.revokeObjectURL(url);
+                setSuccess(true);
+            } catch (error) {
+                throw new Error(
+                    'セルの操作中にエラーが発生しました。\n' +
+                    'テンプレートファイルの形式を確認してください。\n' +
+                    error.message
+                );
+            }
+
         } catch (err) {
             console.error('Error processing file:', err);
             setError(err.message);
