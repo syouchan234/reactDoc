@@ -48,14 +48,6 @@ function Receipt() {
         ));
     };
 
-    // 税込金額から税抜金額と消費税を計算
-    const calculateTax = (totalAmount) => {
-        const taxRate = 0.1;
-        const taxExcluded = Math.floor(totalAmount / (1 + taxRate));
-        const tax = totalAmount - taxExcluded;
-        return { taxExcluded, tax };
-    };
-
     const handleDownload = async () => {
         try {
             // テンプレートの選択
@@ -127,11 +119,11 @@ function Receipt() {
 
                 // 合計金額から税額計算
                 const totalAmount = items.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.price)), 0);
-                const { taxExcluded, tax } = calculateTax(totalAmount);
-
-                worksheet.getCell('G24').value = taxExcluded; // 税抜金額
+                worksheet.getCell('G24').value = totalAmount; // 小計（税抜き金額）
+                const tax = totalAmount * 0.1;
                 worksheet.getCell('G25').value = tax; // 消費税
-                worksheet.getCell('G26').value = totalAmount; // 税込合計
+                const result = tax + totalAmount;
+                worksheet.getCell('G26').value = result; //税込み合計金額
             }
 
             const buffer = await workbook.xlsx.writeBuffer();

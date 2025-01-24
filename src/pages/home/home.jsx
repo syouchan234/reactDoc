@@ -21,7 +21,7 @@ const Home = () => {
     return (
         <div className="home">
             <Typography variant="h6" gutterBottom align="center" sx={{ mb: 4 }}>
-                ♡書類作成支援つーる♡
+                書類作成支援つーる
             </Typography>
 
             <Grid container spacing={3}>

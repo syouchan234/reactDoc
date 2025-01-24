@@ -709,7 +709,7 @@ const Contract = () => {
 
     return (
         <div className="contract">
-            <h1>♡契約書テンプレート作成つーる♡</h1>
+            <h1>契約書</h1>
             <Card className="contract-card">
                 <Stack spacing={3} padding={3}>
                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
