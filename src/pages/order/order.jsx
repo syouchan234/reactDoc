@@ -15,6 +15,7 @@ function Order() {
         }
     ]);
     const [remarks, setRemarks] = useState('');
+    const [customUnits, setCustomUnits] = useState({});
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -37,6 +38,10 @@ function Order() {
         setItems(prev => prev.map((item, i) => 
             i === index ? { ...item, [field]: value } : item
         ));
+    };
+
+    const handleCustomUnitChange = (newCustomUnits) => {
+        setCustomUnits(newCustomUnits);
     };
 
     const handleDownload = async () => {
@@ -81,7 +86,7 @@ function Order() {
                 const rowNumber = 17 + index;
                 worksheet.getCell(`C${rowNumber}`).value = item.productName;
                 worksheet.getCell(`I${rowNumber}`).value = Number(item.quantity);
-                worksheet.getCell(`J${rowNumber}`).value = item.unit;
+                worksheet.getCell(`J${rowNumber}`).value = item.unit === 'その他' ? customUnits[index] : item.unit;
                 worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
             });
 
@@ -139,6 +144,7 @@ function Order() {
             onErrorClose={() => setError(null)}
             onSuccessClose={() => setSuccess(false)}
             additionalFields={additionalFields}
+            onCustomUnitChange={handleCustomUnitChange}
         />
     );
 }

@@ -24,6 +24,7 @@ function Receipt() {
     ]);
     const [remarks, setRemarks] = useState('');
     const [receiptType, setReceiptType] = useState('A'); // A: 明細あり, B: 明細なし
+    const [customUnits, setCustomUnits] = useState({});
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -48,6 +49,10 @@ function Receipt() {
         ));
     };
 
+    const handleCustomUnitChange = (newCustomUnits) => {
+        setCustomUnits(newCustomUnits);
+    };
+
     const handleDownload = async () => {
         try {
             // テンプレートの選択
@@ -67,6 +72,8 @@ function Receipt() {
 
             const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
             const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
+
+            var filename = '';
 
             if (receiptType === 'A') {
                 // タイプA（明細あり）の場合の処理
@@ -94,12 +101,13 @@ function Receipt() {
                     const rowNumber = 17 + index;
                     worksheet.getCell(`C${rowNumber}`).value = item.productName;
                     worksheet.getCell(`I${rowNumber}`).value = Number(item.quantity);
-                    worksheet.getCell(`J${rowNumber}`).value = item.unit;
+                    worksheet.getCell(`J${rowNumber}`).value = item.unit === 'その他' ? customUnits[index] : item.unit
                     worksheet.getCell(`K${rowNumber}`).value = Number(item.price);
                 });
 
                 // 備考欄
                 worksheet.getCell('D46').value = remarks;
+                filename = '領収書.xlsx';
             } else {
                 // タイプB（明細なし）の場合の処理
                 worksheet.getCell('P4').value = 1; // 発行ナンバー
@@ -124,6 +132,8 @@ function Receipt() {
                 worksheet.getCell('G25').value = tax; // 消費税
                 const result = tax + totalAmount;
                 worksheet.getCell('G26').value = result; //税込み合計金額
+
+                filename = '領収書B5印刷用.xlsx';
             }
 
             const buffer = await workbook.xlsx.writeBuffer();
@@ -131,7 +141,7 @@ function Receipt() {
             const url = window.URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = '領収書.xlsx';
+            anchor.download = filename;
             anchor.click();
             window.URL.revokeObjectURL(url);
             setSuccess(true);
@@ -188,6 +198,7 @@ function Receipt() {
             onErrorClose={() => setError(null)}
             onSuccessClose={() => setSuccess(false)}
             additionalFields={additionalFields}
+            onCustomUnitChange={handleCustomUnitChange}
         />
     );
 }
