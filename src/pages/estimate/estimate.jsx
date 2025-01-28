@@ -17,6 +17,8 @@ function Estimate() {
     const [remarks, setRemarks] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [customUnits, setCustomUnits] = useState({});
+    const [initialNum, setInitialNum] = useState(1);
+    const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -83,10 +85,10 @@ function Estimate() {
 
             // 以降のコードは、worksheetが正しく取得できた場合のみ実行
             try {
-                // 発行ナンバー入力
-                worksheet.getCell('M2').value = 1;
-                // 見積日入力
-                worksheet.getCell('M3').value = new Date().toLocaleDateString();
+                const No_cell = worksheet.getCell('M2');
+                No_cell.value = initialNum;
+                const date_cell = worksheet.getCell('M3');
+                date_cell.value = issueDate;
 
                 // 自社情報を設定
                 const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
@@ -192,6 +194,8 @@ function Estimate() {
             onSuccessClose={() => setSuccess(false)}
             additionalFields={additionalFields}
             onCustomUnitChange={handleCustomUnitChange}
+            onInitialNumChange={setInitialNum}
+            onIssueDateChange={setIssueDate}
         />
     );
 }

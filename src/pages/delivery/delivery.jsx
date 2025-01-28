@@ -16,6 +16,8 @@ function Delivery() {
     ]);
     const [remarks, setRemarks] = useState('');
     const [customUnits, setCustomUnits] = useState({});
+    const [initialNum, setInitialNum] = useState(1);
+    const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -56,12 +58,10 @@ function Delivery() {
             await workbook.xlsx.load(arrayBuffer);
             const worksheet = workbook.getWorksheet(1);
 
-            // 発行ナンバー入力
             const No_cell = worksheet.getCell('M2');
-            No_cell.value = 1;
-            // 納品日入力
+            No_cell.value = initialNum;
             const date_cell = worksheet.getCell('M3');
-            date_cell.value = new Date().toLocaleDateString();
+            date_cell.value = issueDate;
 
             // 自社情報を設定
             const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
@@ -145,6 +145,8 @@ function Delivery() {
             onSuccessClose={() => setSuccess(false)}
             additionalFields={additionalFields}
             onCustomUnitChange={handleCustomUnitChange}
+            onInitialNumChange={setInitialNum}
+            onIssueDateChange={setIssueDate}
         />
     );
 }

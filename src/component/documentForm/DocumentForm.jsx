@@ -30,10 +30,30 @@ const DocumentForm = ({
     maxItems = 24,
     units = ['個', 'kg', '台', '人', '時間', 'その他'],
     additionalFields,
-    onCustomUnitChange
+    onCustomUnitChange,
+    initialNum = 1,
+    initialIssueDate = new Date().toISOString().split('T')[0],
+    onInitialNumChange,
+    onIssueDateChange
 }) => {
     // その他の単位を保持するstate
     const [customUnits, setCustomUnits] = useState({});
+    const [num, setNum] = useState(initialNum);
+    const [issueDate, setIssueDate] = useState(initialIssueDate);
+
+    const handleInitialNumChange = (value) => {
+        setNum(value);
+        if (onInitialNumChange) {
+            onInitialNumChange(value);
+        }
+    };
+
+    const handleIssueDateChange = (value) => {
+        setIssueDate(value);
+        if (onIssueDateChange) {
+            onIssueDateChange(value);
+        }
+    };
 
     // 金額計算
     const calculations = useMemo(() => {
@@ -89,6 +109,32 @@ const DocumentForm = ({
             <Card className="document-form-card">
                 <Stack spacing={3} padding={3}>
                     <Typography variant="h6">明細</Typography>
+                    
+                    {/* 発行ナンバーと発行日を中央に配置 */}
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        <Grid container spacing={2} sx={{ width: '100%' }}>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    label="発行ナンバー"
+                                    type="number"
+                                    value={num}
+                                    onChange={(e) => handleInitialNumChange(Number(e.target.value))}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    label="発行日"
+                                    type="date"
+                                    value={issueDate}
+                                    onChange={(e) => handleIssueDateChange(e.target.value)}
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
+                    </Box>
+
                     {items.map((item, index) => (
                         <Box key={index} sx={{ position: 'relative', p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
                             <Grid container spacing={2}>

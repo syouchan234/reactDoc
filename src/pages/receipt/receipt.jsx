@@ -25,6 +25,8 @@ function Receipt() {
     const [remarks, setRemarks] = useState('');
     const [receiptType, setReceiptType] = useState('A'); // A: 明細あり, B: 明細なし
     const [customUnits, setCustomUnits] = useState({});
+    const [initialNum, setInitialNum] = useState(1);
+    const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
 
     const handleAddItem = () => {
         if (items.length >= 24) {
@@ -77,8 +79,8 @@ function Receipt() {
 
             if (receiptType === 'A') {
                 // タイプA（明細あり）の場合の処理
-                worksheet.getCell('M2').value = 1; // 発行ナンバー
-                worksheet.getCell('M3').value = new Date().toLocaleDateString(); // 領収日
+                worksheet.getCell('M2').value = initialNum; // 発行ナンバー
+                worksheet.getCell('M3').value = issueDate; // 領収日
 
                 // 自社情報
                 worksheet.getCell('J5').value = companyInfo.name;
@@ -110,8 +112,8 @@ function Receipt() {
                 filename = '領収書.xlsx';
             } else {
                 // タイプB（明細なし）の場合の処理
-                worksheet.getCell('P4').value = 1; // 発行ナンバー
-                worksheet.getCell('P5').value = new Date().toLocaleDateString(); // 発行日
+                worksheet.getCell('P4').value = initialNum; // 発行ナンバー
+                worksheet.getCell('P5').value = issueDate; // 発行日
 
                 // 顧客情報
                 worksheet.getCell('B6').value = customerInfo.name;
@@ -199,6 +201,8 @@ function Receipt() {
             onSuccessClose={() => setSuccess(false)}
             additionalFields={additionalFields}
             onCustomUnitChange={handleCustomUnitChange}
+            onInitialNumChange={setInitialNum}
+            onIssueDateChange={setIssueDate}
         />
     );
 }
