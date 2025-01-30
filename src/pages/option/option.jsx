@@ -20,19 +20,6 @@ function Option() {
     const savedInfo = localStorage.getItem('companyInfo');
     if (savedInfo) {
       setCompanyInfo(JSON.parse(savedInfo));
-    } else {
-      // サンプルデータを設定
-      const sampleInfo = {
-        name: '株式会社サンプル',
-        postcode: '〒123-4567',
-        address: '東京都渋谷区サンプル1-2-3',
-        building: 'サンプルビル',
-        tel: '03-1234-5678',
-        fax: '03-1234-5679',
-        email: 'info@sample.com'
-      };
-      localStorage.setItem('companyInfo', JSON.stringify(sampleInfo));
-      setCompanyInfo(sampleInfo);
     }
   }, []);
 

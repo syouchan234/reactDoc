@@ -260,7 +260,7 @@ const Contract = () => {
                         {/* 条項 - 編集可能 */}
                         {articles.map((article, index) => (
                             <Box key={index} sx={{ mb: 2 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                <Typography variant="subtitle1">
                                     第{index + 1}条（{article.title}）
                                 </Typography>
                                 {isEditing && editingType === 'article' && editingIndex === index ? (
@@ -538,6 +538,11 @@ const Contract = () => {
         try {
             const companyInfo = JSON.parse(localStorage.getItem('companyInfo'));
             const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
+            // 顧客情報と自社情報を取得し、未入力の場合はデフォルト値を設定
+            const customerName = customerInfo.name || '';
+            const customerAddress = customerInfo.address || '';
+            const companyName = companyInfo.name || '';
+            const companyAddress = companyInfo.address || '';
 
             // 契約書名が入力されている場合はそれを使用、なければ契約種別から自動生成
             const contractTitle = contractInfo.contractName || getDefaultContractTitle();
@@ -636,8 +641,8 @@ const Contract = () => {
             // 甲の情報（チェックボックスに応じて表示）
             if (signatures.showCustomerSignature) {
                 signatureParagraphs.push(
-                    new Paragraph({ text: customerInfo.name, spacing: { after: 200 } }),
-                    new Paragraph({ text: customerInfo.address || '', spacing: { after: 400 } })
+                    new Paragraph({ text: customerName, spacing: { after: 200 } }),
+                    new Paragraph({ text: customerAddress, spacing: { after: 400 } })
                 );
             } else {
                 signatureParagraphs.push(
@@ -654,8 +659,8 @@ const Contract = () => {
             // 乙の情報（チェックボックスに応じて表示）
             if (signatures.showCompanySignature) {
                 signatureParagraphs.push(
-                    new Paragraph({ text: companyInfo.name, spacing: { after: 200 } }),
-                    new Paragraph({ text: companyInfo.address || '', spacing: { after: 200 } })
+                    new Paragraph({ text: companyName, spacing: { after: 200 } }),
+                    new Paragraph({ text: companyAddress, spacing: { after: 200 } })
                 );
             } else {
                 signatureParagraphs.push(
