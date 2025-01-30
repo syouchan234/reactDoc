@@ -12,12 +12,17 @@ import CustomerForm from './component/customerForm/CustomerForm';
 
 import { Fab } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { initializeLocalStorage } from './utils/storage';
 
 function App() {
   const [openCustomerForm, setOpenCustomerForm] = useState(false);
+
+  useEffect(() => {
+    initializeLocalStorage();
+  }, []);
 
   return (
     <BrowserRouter>
