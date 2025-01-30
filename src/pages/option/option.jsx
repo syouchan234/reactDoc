@@ -154,7 +154,7 @@ function Option() {
               color="error" 
               onClick={handleDeleteAll}
             >
-              全データ削除
+              初期化
             </Button>
             <Button 
               variant="contained" 
