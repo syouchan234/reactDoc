@@ -67,7 +67,7 @@ const Header = () => {
                                 <MenuIcon />
                             </IconButton>
                             <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                書類作成アプリ
+                                帳票作成アプリ
                             </Box>
                         </>
                     ) : (
