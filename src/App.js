@@ -10,6 +10,7 @@ import Order from './pages/order/order';
 import Receipt from './pages/receipt/receipt';
 import CustomerForm from './component/customerForm/CustomerForm';
 import Footer from './component/footer/Footer';
+import UseConditions from './pages/use_conditions/use_conditions';
 
 import { Fab } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -38,6 +39,7 @@ function App() {
           <Route path="/order" element={<Order />}/>
           <Route path="/estimate" element={<Estimate />}/>
           <Route path="/Receipt" element={<Receipt />}/>
+          <Route path="/use_conditions" element={<UseConditions/>}/>
         </Routes>
         
         <Fab 

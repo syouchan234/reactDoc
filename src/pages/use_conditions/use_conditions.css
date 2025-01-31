@@ -1,0 +1,31 @@
+.use-conditions {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    max-width: 800px; /* 最大幅を設定 */
+    margin: 0 auto; /* 中央揃え */
+    background-color: #f9f9f9; /* 背景色を追加 */
+    border-radius: 8px; /* 角を丸くする */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを追加 */
+}
+
+.section {
+    margin-bottom: 30px; /* セクション間の余白を追加 */
+    padding: 15px; /* セクション内のパディング */
+    background-color: #ffffff; /* セクションの背景色 */
+    border-radius: 5px; /* セクションの角を丸くする */
+}
+
+h1 {
+    font-size: 28px; /* 見出しのフォントサイズを調整 */
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 22px; /* サブ見出しのフォントサイズを調整 */
+    margin-top: 20px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.6; /* 行間を広げて読みやすく */
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Card, Stack, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Card, Stack, Snackbar, Alert, Link } from '@mui/material';
 import './option.css';
 
 function Option() {
@@ -193,6 +193,10 @@ function Option() {
           {error}
         </Alert>
       </Snackbar>
+
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link href="/use_conditions">利用規約</Link>
+      </div>
     </div>
   );
 }
